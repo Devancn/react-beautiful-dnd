@@ -1,24 +1,28 @@
 const htmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   mode: "development",
-  entry: "./index.js",
+  entry: "./src/index.js",
   output: {
     filename: "bundle.js",
+  },
+  resolve: {
+    extensions: [".js", ".jsx", ".json"],
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         use: [
           {
             loader: "babel-loader",
             options: {
-              presets: ["@babel/preset-react"],
+              presets: ["@babel/preset-react", "@babel/preset-flow"],
+              plugins: ["@babel/plugin-proposal-export-default-from"],
             },
           },
         ],
       },
     ],
   },
-  plugins: [new htmlWebpackPlugin({ template: "./index.html" })],
+  plugins: [new htmlWebpackPlugin({ template: "./src/index.html" })],
 };

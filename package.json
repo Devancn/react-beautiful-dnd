@@ -14,19 +14,10 @@
   },
   "main": "lib/index.js",
   "scripts": {
-    "test": "jest --config ./jest.config.js",
-    "validate": "yarn run lint && yarn run typecheck",
-    "lint": "eslint src test stories",
-    "typecheck": "flow check",
-    "build": "babel src -d lib",
-    "storybook": "start-storybook -p 9002",
-    "build-storybook": "build-storybook -c .storybook -o site",
-    "prepublish": "yarn run build"
+    "start": "webpack serve"
   },
   "dependencies": {
     "@atlaskit/css-reset": "1.1.5",
-    "@storybook/react": "3.2.3",
-    "babel-runtime": "6.25.0",
     "invariant": "2.2.2",
     "memoize-one": "3.0.1",
     "prop-types": "15.5.10",
@@ -39,30 +30,23 @@
     "reselect": "3.0.1"
   },
   "devDependencies": {
-    "babel-cli": "6.24.1",
-    "babel-eslint": "7.2.3",
-    "babel-plugin-react-flow-props-to-prop-types": "0.15.0",
-    "babel-plugin-transform-class-properties": "6.24.1",
-    "babel-plugin-transform-export-extensions": "6.22.0",
-    "babel-plugin-transform-object-rest-spread": "6.23.0",
-    "babel-plugin-transform-runtime": "6.23.0",
-    "babel-preset-es2015": "6.24.1",
-    "babel-preset-flow": "6.23.0",
-    "babel-preset-react": "6.24.1",
+    "@babel/core": "^7.14.3",
+    "@babel/plugin-proposal-export-default-from": "^7.12.13",
+    "@babel/preset-env": "^7.14.4",
+    "@babel/preset-flow": "^7.13.13",
+    "@babel/preset-react": "^7.13.13",
+    "babel": "^6.23.0",
+    "babel-loader": "^8.2.2",
     "enzyme": "2.9.1",
-    "eslint": "3.19.0",
-    "eslint-config-airbnb": "15.1.0",
-    "eslint-plugin-import": "2.7.0",
-    "eslint-plugin-jest": "20.0.3",
-    "eslint-plugin-jsx-a11y": "5",
-    "eslint-plugin-react": "7.1.0",
-    "flow-bin": "0.52.0",
-    "jest": "20.0.4",
+    "html-webpack-plugin": "^5.3.1",
     "raf-stub": "2.0.1",
     "react": "15.6.1",
     "react-addons-test-utils": "15.6.0",
     "react-dom": "15.6.1",
-    "styled-components": "2.1.2"
+    "styled-components": "2.1.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
   },
   "peerDependencies": {
     "react": "15.6.1"

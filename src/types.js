@@ -1,6 +1,6 @@
 // @flow
-import type { Store as ReduxStore, Dispatch as ReduxDispatch } from 'redux';
-import type { Action as ActionCreators } from './state/action-creators';
+import type { Store as ReduxStore, Dispatch as ReduxDispatch } from "redux";
+import type { Action as ActionCreators } from "./state/action-creators";
 
 export type Id = string;
 export type DraggableId = Id;
@@ -21,7 +21,7 @@ export type DimensionFragment = {|
   width: number,
   height: number,
   center: Position,
-|}
+|};
 
 export type DraggableDimension = {|
   id: DraggableId,
@@ -33,8 +33,8 @@ export type DraggableDimension = {|
   client: {|
     withMargin: DimensionFragment,
     withoutMargin: DimensionFragment,
-  |}
-|}
+  |},
+|};
 
 export type DroppableDimension = {|
   id: DroppableId,
@@ -45,11 +45,11 @@ export type DroppableDimension = {|
   page: {|
     withMargin: DimensionFragment,
     withoutMargin: DimensionFragment,
-  |}
-|}
+  |},
+|};
 export type DraggableLocation = {|
   droppableId: DroppableId,
-  index: number
+  index: number,
 |};
 
 export type DraggableDimensionMap = { [key: DraggableId]: DraggableDimension };
@@ -59,21 +59,21 @@ export type DragMovement = {|
   draggables: DraggableId[],
   amount: number,
   isMovingForward: boolean,
-|}
+|};
 
 export type DragImpact = {|
   movement: DragMovement,
-  destination: ?DraggableLocation
-|}
+  destination: ?DraggableLocation,
+|};
 
 export type InitialDragLocation = {|
   selection: Position,
   center: Position,
-|}
+|};
 
 export type WithinDroppable = {|
   center: Position,
-|}
+|};
 
 export type InitialDrag = {|
   source: DraggableLocation,
@@ -87,13 +87,13 @@ export type InitialDrag = {|
   // viewport + window scroll + droppable scroll diff
   // (this will be the same as page initially)
   withinDroppable: WithinDroppable,
-|}
+|};
 
 export type CurrentDragLocation = {|
   selection: Position,
   center: Position,
   offset: Position,
-|}
+|};
 
 export type CurrentDrag = {|
   id: DraggableId,
@@ -108,30 +108,35 @@ export type CurrentDrag = {|
   // viewport + scroll + droppable scroll
   withinDroppable: WithinDroppable,
   shouldAnimate: boolean,
-|}
+|};
 
 export type DropResult = {|
   draggableId: DraggableId,
   source: DraggableLocation,
   // may not have any destination (drag to nowhere)
-  destination: ?DraggableLocation
-|}
+  destination: ?DraggableLocation,
+|};
 
 export type DragState = {|
   initial: InitialDrag,
   current: CurrentDrag,
   impact: DragImpact,
-|}
+|};
 
 export type PendingDrop = {|
   newHomeOffset: Position,
   last: DragState,
   result: DropResult,
-|}
+|};
 
-export type Direction = 'vertical'; // | horiztonal - currently not supported
+export type Direction = "vertical"; // | horiztonal - currently not supported
 
-export type Phase = 'IDLE' | 'COLLECTING_DIMENSIONS' | 'DRAGGING' | 'DROP_ANIMATING' | 'DROP_COMPLETE';
+export type Phase =
+  | "IDLE"
+  | "COLLECTING_DIMENSIONS"
+  | "DRAGGING"
+  | "DROP_ANIMATING"
+  | "DROP_COMPLETE";
 
 export type DimensionState = {|
   request: ?TypeId,
@@ -142,7 +147,7 @@ export type DimensionState = {|
 export type DropState = {|
   pending: ?PendingDrop,
   result: ?DropResult,
-|}
+|};
 
 export type State = {
   phase: Phase,
@@ -159,7 +164,7 @@ export type Dispatch = ReduxDispatch<Action>;
 export type Hooks = {|
   onDragStart?: (id: DraggableId, location: DraggableLocation) => void,
   onDragEnd: (result: DropResult) => void,
-|}
+|};
 
 // These types are 'fake'. They really just resolve to 'any'.
 // But it is useful for readability and intention

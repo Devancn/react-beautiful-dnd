@@ -1,10 +1,5 @@
 // @flow
-import type {
-  PendingDrop,
-  DragState,
-  Phase,
-  State,
-} from '../types';
+import type { PendingDrop, DragState, Phase, State } from "../types";
 
 export const phaseSelector = (state: State): Phase => state.phase;
 

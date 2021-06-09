@@ -1,6 +1,7 @@
 // @flow
-import memoizeOne from 'memoize-one';
-import type { TypeId,
+import memoizeOne from "memoize-one";
+import type {
+  TypeId,
   Action,
   State,
   DraggableDimension,
@@ -18,11 +19,11 @@ import type { TypeId,
   CurrentDragLocation,
   Position,
   WithinDroppable,
-} from '../types';
-import { add, subtract, negate } from './position';
-import getDragImpact from './get-drag-impact';
-import getDiffToJumpToNextIndex from './get-diff-to-jump-to-next-index';
-import getDroppableOver from './get-droppable-over';
+} from "../types";
+import { add, subtract, negate } from "./position";
+import getDragImpact from "./get-drag-impact";
+import getDiffToJumpToNextIndex from "./get-diff-to-jump-to-next-index";
+import getDroppableOver from "./get-droppable-over";
 
 const noDimensions: DimensionState = {
   request: null,
@@ -35,7 +36,7 @@ const origin: Position = { x: 0, y: 0 };
 const clean = memoizeOne((phase: ?Phase): State => {
   const state: State = {
     // flow was not good with having a default arg on an optional type
-    phase: phase || 'IDLE',
+    phase: phase || "IDLE",
     drag: null,
     drop: null,
     dimension: noDimensions,
@@ -49,8 +50,8 @@ type MoveArgs = {|
   clientSelection: Position,
   pageSelection: Position,
   shouldAnimate?: boolean,
-  windowScroll?: Position
-|}
+  windowScroll?: Position,
+|};
 
 const move = ({
   state,
@@ -59,22 +60,26 @@ const move = ({
   shouldAnimate = false,
   windowScroll,
 }: MoveArgs): State => {
-  if (state.phase !== 'DRAGGING') {
-    console.error('cannot move while not dragging');
+  if (state.phase !== "DRAGGING") {
+    console.error("cannot move while not dragging");
     return clean();
   }
 
   if (state.drag == null) {
-    console.error('cannot move if there is no drag information');
+    console.error("cannot move if there is no drag information");
     return clean();
   }
 
   const previous: CurrentDrag = state.drag.current;
   const initial: InitialDrag = state.drag.initial;
-  const droppable: DroppableDimension = state.dimension.droppable[initial.source.droppableId];
+  const droppable: DroppableDimension =
+    state.dimension.droppable[initial.source.droppableId];
 
   const client: CurrentDragLocation = (() => {
-    const offset: Position = subtract(clientSelection, initial.client.selection);
+    const offset: Position = subtract(
+      clientSelection,
+      initial.client.selection
+    );
     const center: Position = add(offset, initial.client.center);
 
     const result: CurrentDragLocation = {
@@ -97,7 +102,10 @@ const move = ({
     return result;
   })();
 
-  const scrollDiff: Position = subtract(droppable.scroll.initial, droppable.scroll.current);
+  const scrollDiff: Position = subtract(
+    droppable.scroll.initial,
+    droppable.scroll.current
+  );
 
   const withinDroppable: WithinDroppable = {
     center: add(page.center, negate(scrollDiff)),
@@ -135,25 +143,26 @@ const move = ({
   };
 };
 
-export default (state: State = clean('IDLE'), action: Action): State => {
-  if (action.type === 'BEGIN_LIFT') {
-    if (state.phase !== 'IDLE') {
-      console.error('trying to start a lift while another is occurring');
+export default (state: State = clean("IDLE"), action: Action): State => {
+  console.log(action, "action");
+  if (action.type === "BEGIN_LIFT") {
+    if (state.phase !== "IDLE") {
+      console.error("trying to start a lift while another is occurring");
       return state;
     }
-    return clean('COLLECTING_DIMENSIONS');
+    return clean("COLLECTING_DIMENSIONS");
   }
 
-  if (action.type === 'REQUEST_DIMENSIONS') {
-    if (state.phase !== 'COLLECTING_DIMENSIONS') {
-      console.error('trying to collect dimensions at the wrong time');
+  if (action.type === "REQUEST_DIMENSIONS") {
+    if (state.phase !== "COLLECTING_DIMENSIONS") {
+      console.error("trying to collect dimensions at the wrong time");
       return state;
     }
 
     const typeId: TypeId = action.payload;
 
     return {
-      phase: 'COLLECTING_DIMENSIONS',
+      phase: "COLLECTING_DIMENSIONS",
       drag: null,
       drop: null,
       dimension: {
@@ -164,11 +173,14 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     };
   }
 
-  if (action.type === 'PUBLISH_DRAGGABLE_DIMENSION') {
+  if (action.type === "PUBLISH_DRAGGABLE_DIMENSION") {
     const dimension: DraggableDimension = action.payload;
 
-    if (state.phase !== 'COLLECTING_DIMENSIONS') {
-      console.warn('dimension rejected as no longer requesting dimensions', dimension);
+    if (state.phase !== "COLLECTING_DIMENSIONS") {
+      console.warn(
+        "dimension rejected as no longer requesting dimensions",
+        dimension
+      );
       return state;
     }
 
@@ -190,11 +202,14 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     };
   }
 
-  if (action.type === 'PUBLISH_DROPPABLE_DIMENSION') {
+  if (action.type === "PUBLISH_DROPPABLE_DIMENSION") {
     const dimension: DroppableDimension = action.payload;
 
-    if (state.phase !== 'COLLECTING_DIMENSIONS') {
-      console.warn('dimension rejected as no longer requesting dimensions', dimension);
+    if (state.phase !== "COLLECTING_DIMENSIONS") {
+      console.warn(
+        "dimension rejected as no longer requesting dimensions",
+        dimension
+      );
       return state;
     }
 
@@ -216,9 +231,9 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     };
   }
 
-  if (action.type === 'COMPLETE_LIFT') {
-    if (state.phase !== 'COLLECTING_DIMENSIONS') {
-      console.error('trying complete lift without collecting dimensions');
+  if (action.type === "COMPLETE_LIFT") {
+    if (state.phase !== "COLLECTING_DIMENSIONS") {
+      console.error("trying complete lift without collecting dimensions");
       return state;
     }
 
@@ -240,7 +255,7 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     const source: ?DraggableLocation = impact.destination;
 
     if (!source) {
-      console.error('lifting a draggable that is not inside a droppable');
+      console.error("lifting a draggable that is not inside a droppable");
       return clean();
     }
 
@@ -272,7 +287,7 @@ export default (state: State = clean('IDLE'), action: Action): State => {
 
     return {
       ...state,
-      phase: 'DRAGGING',
+      phase: "DRAGGING",
       drag: {
         initial,
         current,
@@ -281,14 +296,16 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     };
   }
 
-  if (action.type === 'UPDATE_DROPPABLE_DIMENSION_SCROLL') {
-    if (state.phase !== 'DRAGGING') {
-      console.error('cannot update a droppable dimensions scroll when not dragging');
+  if (action.type === "UPDATE_DROPPABLE_DIMENSION_SCROLL") {
+    if (state.phase !== "DRAGGING") {
+      console.error(
+        "cannot update a droppable dimensions scroll when not dragging"
+      );
       return clean();
     }
 
     if (state.drag == null) {
-      console.error('invalid store state');
+      console.error("invalid store state");
       return clean();
     }
 
@@ -297,7 +314,10 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     const target: ?DroppableDimension = state.dimension.droppable[id];
 
     if (!target) {
-      console.error('cannot update a droppable that is not inside of the state', id);
+      console.error(
+        "cannot update a droppable that is not inside of the state",
+        id
+      );
       return clean();
     }
 
@@ -333,7 +353,7 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     });
   }
 
-  if (action.type === 'MOVE') {
+  if (action.type === "MOVE") {
     const { client, page, windowScroll } = action.payload;
     return move({
       state,
@@ -343,11 +363,11 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     });
   }
 
-  if (action.type === 'MOVE_BY_WINDOW_SCROLL') {
+  if (action.type === "MOVE_BY_WINDOW_SCROLL") {
     const { windowScroll } = action.payload;
 
     if (!state.drag) {
-      console.error('cannot move with window scrolling if no current drag');
+      console.error("cannot move with window scrolling if no current drag");
       return clean();
     }
 
@@ -358,13 +378,10 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     // diff between the previous scroll position and the initial
     const previousDiff: Position = subtract(
       current.windowScroll,
-      initial.windowScroll,
+      initial.windowScroll
     );
     // diff between the current scroll position and the initial
-    const currentDiff: Position = subtract(
-      windowScroll,
-      initial.windowScroll,
-    );
+    const currentDiff: Position = subtract(windowScroll, initial.windowScroll);
     // diff required to move from previous diff to new diff
     const diff: Position = subtract(currentDiff, previousDiff);
     // move the page coordinate by that amount
@@ -378,25 +395,25 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     });
   }
 
-  if (action.type === 'MOVE_FORWARD' || action.type === 'MOVE_BACKWARD') {
-    if (state.phase !== 'DRAGGING') {
-      console.error('cannot move while not dragging', action);
+  if (action.type === "MOVE_FORWARD" || action.type === "MOVE_BACKWARD") {
+    if (state.phase !== "DRAGGING") {
+      console.error("cannot move while not dragging", action);
       return clean();
     }
 
     if (!state.drag) {
-      console.error('cannot move if there is no drag information');
+      console.error("cannot move if there is no drag information");
       return clean();
     }
 
     const existing: DragState = state.drag;
 
     if (!existing.impact.destination) {
-      console.warn('cannot move forward when there is not previous location');
+      console.warn("cannot move forward when there is not previous location");
       return state;
     }
 
-    const isMovingForward: boolean = action.type === 'MOVE_FORWARD';
+    const isMovingForward: boolean = action.type === "MOVE_FORWARD";
 
     const diff: ?Position = getDiffToJumpToNextIndex({
       isMovingForward,
@@ -416,12 +433,15 @@ export default (state: State = clean('IDLE'), action: Action): State => {
 
     // current limitation: cannot go beyond visible border of list
     const droppableId: ?DroppableId = getDroppableOver(
-      page, state.dimension.droppable,
+      page,
+      state.dimension.droppable
     );
 
     if (!droppableId) {
       // eslint-disable-next-line no-console
-      console.info('currently not supporting moving a draggable outside the visibility bounds of a droppable');
+      console.info(
+        "currently not supporting moving a draggable outside the visibility bounds of a droppable"
+      );
       return state;
     }
 
@@ -433,16 +453,16 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     });
   }
 
-  if (action.type === 'DROP_ANIMATE') {
+  if (action.type === "DROP_ANIMATE") {
     const { newHomeOffset, result } = action.payload;
 
-    if (state.phase !== 'DRAGGING') {
-      console.error('cannot animate drop while not dragging', action);
+    if (state.phase !== "DRAGGING") {
+      console.error("cannot animate drop while not dragging", action);
       return state;
     }
 
     if (!state.drag) {
-      console.error('cannot animate drop - invalid drag state');
+      console.error("cannot animate drop - invalid drag state");
       return clean();
     }
 
@@ -453,7 +473,7 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     };
 
     return {
-      phase: 'DROP_ANIMATING',
+      phase: "DROP_ANIMATING",
       drag: null,
       drop: {
         pending,
@@ -463,11 +483,11 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     };
   }
 
-  if (action.type === 'DROP_COMPLETE') {
+  if (action.type === "DROP_COMPLETE") {
     const result: DropResult = action.payload;
 
     return {
-      phase: 'DROP_COMPLETE',
+      phase: "DROP_COMPLETE",
       drag: null,
       drop: {
         pending: null,
@@ -477,7 +497,7 @@ export default (state: State = clean('IDLE'), action: Action): State => {
     };
   }
 
-  if (action.type === 'CANCEL') {
+  if (action.type === "CANCEL") {
     return clean();
   }
 
