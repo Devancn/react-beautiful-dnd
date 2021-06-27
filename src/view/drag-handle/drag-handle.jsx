@@ -55,9 +55,9 @@ export default class DragHandle extends Component {
   });
 
   // scheduled functions
-  scheduleMove = rafScheduler((point: Position) => {
+  scheduleMove =(point: Position) => {
     this.ifDragging(() => this.memoizedMove(point.x, point.y));
-  });
+  };
 
   scheduleMoveForward = rafScheduler(() => {
     this.ifDragging(this.props.callbacks.onMoveForward);
@@ -88,23 +88,21 @@ export default class DragHandle extends Component {
       this.stopDragging();
       return;
     }
-
     if (nextProps.isEnabled) {
       return;
     }
 
     // dragging is *not* enabled
-
     // if a drag is pending - clear it
     if (this.state.pending) {
       this.stopPendingMouseDrag();
       return;
     }
-
     // need to cancel a current drag
     if (this.state.draggingWith) {
       this.stopDragging(() => this.props.callbacks.onCancel());
     }
+
   }
 
   onWindowResize = () => {
@@ -155,12 +153,10 @@ export default class DragHandle extends Component {
       x: clientX,
       y: clientY,
     };
-
     if (!pending) {
       this.scheduleMove(point);
       return;
     }
-
     // not yet dragging
     const shouldStartDrag = Math.abs(pending.x - point.x) >= sloppyClickThreshold ||
                             Math.abs(pending.y - point.y) >= sloppyClickThreshold;
@@ -196,18 +192,13 @@ export default class DragHandle extends Component {
   onWindowMouseDown = () => {
     // this can happen during a drag when the user clicks a button
     // other than the primary mouse button
+    console.log('onWindowMouseDown')
     this.stopDragging(() => this.props.callbacks.onCancel());
   }
 
   onMouseDown = (event: MouseEvent) => {
-    if (this.state.draggingWith === 'KEYBOARD') {
-      // allowing any type of mouse down to cancel
-      this.stopDragging(() => this.props.callbacks.onCancel());
-      return;
-    }
 
     const { button, clientX, clientY } = event;
-
     if (button !== primaryButton) {
       return;
     }
@@ -308,15 +299,6 @@ export default class DragHandle extends Component {
   }
 
   startPendingMouseDrag = (point: Position) => {
-    if (this.state.draggingWith) {
-      console.error('cannot start a pending mouse drag when already dragging');
-      return;
-    }
-
-    if (this.state.pending) {
-      console.error('cannot start a pending mouse drag when there is already a pending position');
-      return;
-    }
 
     // need to bind the window events
     this.bindWindowEvents();
@@ -325,26 +307,11 @@ export default class DragHandle extends Component {
       draggingWith: null,
       pending: point,
     };
-
     this.setState(state);
   }
 
   startDragging = (type: DragTypes, done?: () => void = noop) => {
-    if (this.state.draggingWith) {
-      console.error('cannot start dragging when already dragging');
-      return;
-    }
-
-    if (type === 'MOUSE' && !this.state.pending) {
-      console.error('cannot start mouse drag when there is not a pending position');
-      return;
-    }
-
-    // keyboard events already bound for mouse dragging
-    if (type === 'KEYBOARD') {
-      this.bindWindowEvents();
-    }
-
+   
     const state: State = {
       draggingWith: type,
       pending: null,
@@ -397,10 +364,10 @@ export default class DragHandle extends Component {
   bindWindowEvents = () => {
     window.addEventListener('mousemove', this.onWindowMouseMove);
     window.addEventListener('mouseup', this.onWindowMouseUp);
-    window.addEventListener('mousedown', this.onWindowMouseDown);
-    window.addEventListener('keydown', this.onWindowKeydown);
-    window.addEventListener('resize', this.onWindowResize);
-    window.addEventListener('scroll', this.onWindowScroll, { passive: true });
+    // window.addEventListener('mousedown', this.onWindowMouseDown);
+    // window.addEventListener('keydown', this.onWindowKeydown);
+    // window.addEventListener('resize', this.onWindowResize);
+    // window.addEventListener('scroll', this.onWindowScroll, { passive: true });
   }
 
   getProvided = memoizeOne((isEnabled: boolean, isDragging: boolean): ?Provided => {
@@ -410,13 +377,13 @@ export default class DragHandle extends Component {
 
     const provided: Provided = {
       onMouseDown: this.onMouseDown,
-      onKeyDown: this.onKeyDown,
-      onClick: this.onClick,
-      tabIndex: 0,
-      'aria-grabbed': isDragging,
-      draggable: false,
-      onDragStart: getFalse,
-      onDrop: getFalse,
+      // onKeyDown: this.onKeyDown,
+      // onClick: this.onClick,
+      // tabIndex: 0,
+      // 'aria-grabbed': isDragging,
+      // draggable: false,
+      // onDragStart: getFalse,
+      // onDrop: getFalse,
     };
 
     return provided;

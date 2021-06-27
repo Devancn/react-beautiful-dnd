@@ -144,7 +144,7 @@ const move = ({
 };
 
 export default (state: State = clean("IDLE"), action: Action): State => {
-  console.log(action, "action");
+  console.log(action, 'action');
   if (action.type === "BEGIN_LIFT") {
     if (state.phase !== "IDLE") {
       console.error("trying to start a lift while another is occurring");
@@ -160,7 +160,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
     }
 
     const typeId: TypeId = action.payload;
-
     return {
       phase: "COLLECTING_DIMENSIONS",
       drag: null,
@@ -188,7 +187,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
       console.error(`dimension already exists for ${dimension.id}`);
       return state;
     }
-
     return {
       ...state,
       dimension: {
@@ -243,7 +241,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
     const withinDroppable: WithinDroppable = {
       center: page.center,
     };
-
     const impact: DragImpact = getDragImpact({
       page: page.selection,
       withinDroppable,
@@ -251,14 +248,12 @@ export default (state: State = clean("IDLE"), action: Action): State => {
       draggables: state.dimension.draggable,
       droppables: state.dimension.droppable,
     });
-
     const source: ?DraggableLocation = impact.destination;
 
     if (!source) {
       console.error("lifting a draggable that is not inside a droppable");
       return clean();
     }
-
     const initial: InitialDrag = {
       source,
       client,

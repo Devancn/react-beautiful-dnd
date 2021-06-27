@@ -124,6 +124,7 @@ export const getDroppableDimension = ({
   windowScroll = origin,
   scroll = origin,
 }: GetDroppableArgs): DroppableDimension => {
+
   const withWindowScroll = getWithPosition(clientRect, windowScroll);
   const withWindowScrollAndMargin = getWithMargin(withWindowScroll, margin);
 

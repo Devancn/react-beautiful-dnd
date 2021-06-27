@@ -20,7 +20,6 @@ export default class Droppable extends Component {
   state: State = {
     ref: null,
   }
-
   static defaultProps: DefaultProps = {
     type: 'DEFAULT',
     isDropDisabled: false,
@@ -72,7 +71,7 @@ export default class Droppable extends Component {
         type={this.props.type}
         targetRef={this.state.ref}
       >
-        {this.props.children(provided, snapshot)}
+        {this.props.children(provided, false)}
       </DroppableDimensionPublisher>
     );
   }

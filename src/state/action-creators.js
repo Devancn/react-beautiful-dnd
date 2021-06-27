@@ -291,10 +291,12 @@ export const lift = (id: DraggableId,
   page: InitialDragLocation,
   windowScroll: Position,
 ) => (dispatch: Dispatch, getState: Function) => {
+  /*
   (() => {
     const state: State = getState();
     // quickly finish any current animations
     if (state.phase === 'DROP_ANIMATING') {
+      console.log('DROP_ANIMATINGsdfsdkfjsdlkfjkdls')
       if (!state.drop || !state.drop.pending) {
         console.error('cannot flush drop animation if there is no pending');
         dispatch(cancel('super cool id'));
@@ -303,17 +305,17 @@ export const lift = (id: DraggableId,
       dispatch(completeDrop(state.drop.pending.result));
     }
   })();
+  */
 
   // https://github.com/chenglou/react-motion/issues/437
   // need to allow a flush of react-motion
-  setTimeout(() => {
+  // setTimeout(() => {
     const state: State = getState();
-
-    if (state.phase !== 'IDLE' || state.phase !== 'DRAG_COMPLETE') {
+    
+   /* if (state.phase !== 'IDLE' || state.phase !== 'DRAG_COMPLETE') {
       // TODO: cancel does not need an id
       dispatch(cancel('some-fake-id'));
-    }
-
+    }*/ 
     dispatch(beginLift());
     dispatch(requestDimensions(type));
 
@@ -330,7 +332,7 @@ export const lift = (id: DraggableId,
       }
       dispatch(completeLift(id, type, client, page, windowScroll));
     });
-  });
+  // });
 };
 
 export type Action = BeginLiftAction |

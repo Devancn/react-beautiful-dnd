@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import propTypes from 'prop-types'
 import { DragDropContext, Draggable, Droppable } from "./dnd";
 
 const getItems = (count) =>
@@ -36,7 +37,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: getItems(10),
+      items: getItems(3),
     };
     this.onDragEnd = this.onDragEnd.bind(this);
   }
@@ -91,6 +92,16 @@ class App extends React.Component {
         </Droppable>
       </DragDropContext>
     );
+  }
+}
+
+
+class Test extends React.Component {
+  static contextType = {
+    color: propTypes.string.isRequired
+  }
+  render() {
+    return <div>{this.context}</div>
   }
 }
 

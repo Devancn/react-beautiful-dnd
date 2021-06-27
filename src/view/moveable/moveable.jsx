@@ -49,7 +49,6 @@ export default class Movable extends Component {
 
   onRest = () => {
     const { onMoveEnd } = this.props;
-
     if (!onMoveEnd) {
       return;
     }
@@ -71,10 +70,13 @@ export default class Movable extends Component {
     }
 
     const selected = speed === 'FAST' ? physics.fast : physics.standard;
-
+    const x = spring(destination.x, selected);
+    const y =  spring(destination.y, selected)
+    console.log(x);
+    console.log(y)
     return {
-      x: spring(destination.x, selected),
-      y: spring(destination.y, selected),
+      x,
+      y
     };
   }
 
@@ -85,13 +87,13 @@ export default class Movable extends Component {
     // even if both defaultStyle and style are {x: 0, y: 0 } if there was
     // a previous animation it uses the last value rather than the final value
     const isNotMoving: boolean = isAtOrigin(final);
-
     return (
       <Motion defaultStyle={origin} style={final} onRest={this.onRest}>
-        {(current: Position) =>
-          this.props.children(
+        {(current: Position) => {
+          return this.props.children(
             getStyle(isNotMoving, current.x, current.y)
           )}
+        }
       </Motion>
     );
   }

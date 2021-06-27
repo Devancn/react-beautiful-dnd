@@ -100,12 +100,9 @@ export default class Draggable extends Component {
   }
 
   onLift = (point: Position) => {
-    this.throwIfCannotDrag();
     const { lift, draggableId, type } = this.props;
     const { ref } = this.state;
-
     const windowScroll: Position = getWindowScrollPosition();
-
     const client: InitialDragLocation = {
       selection: point,
       center: getCenterPosition(ref),
@@ -115,7 +112,6 @@ export default class Draggable extends Component {
       selection: add(client.selection, windowScroll),
       center: add(client.center, windowScroll),
     };
-
     lift(draggableId, type, client, page, windowScroll);
   }
 
@@ -143,9 +139,7 @@ export default class Draggable extends Component {
 
   onMove = (client: Position) => {
     this.throwIfCannotDrag();
-
     const { draggableId, dimension, move } = this.props;
-
     // dimensions not provided yet
     if (!dimension) {
       return;
@@ -324,9 +318,7 @@ export default class Draggable extends Component {
       dimension,
       children,
     } = this.props;
-
     const speed = this.getSpeed(isDragging, isDropAnimating, canAnimate);
-
     return (
       <DraggableDimensionPublisher
         draggableId={draggableId}
@@ -339,29 +331,31 @@ export default class Draggable extends Component {
           destination={offset}
           onMoveEnd={this.onMoveEnd}
         >
-          {(movementStyle: MovementStyle) => (
-            <DragHandle
-              isDragging={isDragging}
-              isEnabled={!isDragDisabled}
-              callbacks={this.callbacks}
-              draggableRef={this.state.ref}
-            >
-              {(dragHandleProps: ?DragHandleProvided) =>
-                children(
-                  this.getProvided(
-                    isDragging,
-                    isDropAnimating,
-                    isAnotherDragging,
-                    canAnimate,
-                    dimension,
-                    dragHandleProps,
-                    movementStyle,
-                  ),
-                  this.getSnapshot(isDragging, isDropAnimating)
-                )
-              }
-            </DragHandle>
-        )}
+          {(movementStyle: MovementStyle) => {
+            return (
+              <DragHandle
+                isDragging={isDragging}
+                isEnabled={!isDragDisabled}
+                callbacks={this.callbacks}
+                draggableRef={this.state.ref}
+              >
+                {(dragHandleProps: ?DragHandleProvided) =>
+                  children(
+                    this.getProvided(
+                      isDragging,
+                      isDropAnimating,
+                      isAnotherDragging,
+                      canAnimate,
+                      dimension,
+                      dragHandleProps,
+                      movementStyle,
+                    ),
+                    this.getSnapshot(isDragging, isDropAnimating)
+                  )
+                }
+              </DragHandle>
+          )
+          }}
         </Moveable>
       </DraggableDimensionPublisher>
     );

@@ -6,6 +6,7 @@ import type {
 } from '../types';
 
 export default (target: Position, dimension: DroppableDimension): boolean => {
+ 
   const fragment: DimensionFragment = dimension.page.withMargin;
   const { top, right, bottom, left } = fragment;
 

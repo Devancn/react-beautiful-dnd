@@ -50,29 +50,26 @@ export const makeSelector = () => {
       id: DroppableId,
       isDropDisabled: boolean,
     ): MapProps => {
-      if (isDropDisabled) {
-        return getMapProps(false);
-      }
 
-      if (phase === 'DRAGGING') {
-        if (!drag) {
-          console.error('cannot determine dragging over as there is not drag');
-          return getMapProps(false);
-        }
+      // if (phase === 'DRAGGING') {
+      //   if (!drag) {
+      //     console.error('cannot determine dragging over as there is not drag');
+      //     return getMapProps(false);
+      //   }
 
-        const isDraggingOver = getIsDraggingOver(id, drag.impact.destination);
-        return getMapProps(isDraggingOver);
-      }
+      //   const isDraggingOver = getIsDraggingOver(id, drag.impact.destination);
+      //   return getMapProps(isDraggingOver);
+      // }
 
-      if (phase === 'DROP_ANIMATING') {
-        if (!pending) {
-          console.error('cannot determine dragging over as there is no pending result');
-          return getMapProps(false);
-        }
+      // if (phase === 'DROP_ANIMATING') {
+      //   if (!pending) {
+      //     console.error('cannot determine dragging over as there is no pending result');
+      //     return getMapProps(false);
+      //   }
 
-        const isDraggingOver = getIsDraggingOver(id, pending.last.impact.destination);
-        return getMapProps(isDraggingOver);
-      }
+      //   const isDraggingOver = getIsDraggingOver(id, pending.last.impact.destination);
+      //   return getMapProps(isDraggingOver);
+      // }
 
       return getMapProps(false);
     },
@@ -81,15 +78,19 @@ export const makeSelector = () => {
 
 const makeMapStateToProps = () => {
   const selector = makeSelector();
-  return (state: State, props: OwnProps) => selector(state, props);
+  return (state: State, props: OwnProps) => {
+    const result = selector(state, props);
+    return result;
+  };
 };
 
 // Leaning heavily on the default shallow equality checking
 // that `connect` provides.
 // It avoids needing to do it own within `Droppable`
-export default connect(
-  makeMapStateToProps(),
-  null,
-  null,
-  { storeKey },
-)(Droppable);
+export default Droppable;
+// export default connect(
+//   makeMapStateToProps(),
+//   null,
+//   null,
+//   { storeKey },
+// )(Droppable);

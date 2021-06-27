@@ -48,7 +48,6 @@ export default class DraggableDimensionPublisher extends Component {
     // Because the dimension publisher wraps children - it might render even when its props do
     // not change. We need to ensure that it does not publish when it should not.
     const shouldPublish = !this.props.shouldPublish && nextProps.shouldPublish;
-
     if (shouldPublish) {
       this.props.publish(this.getDimension());
     }

@@ -33,19 +33,18 @@ export default class DroppableDimensionPublisher extends Component {
     return offset;
   }
 
+
   getDimension = (): DroppableDimension => {
     const { droppableId, targetRef } = this.props;
     invariant(targetRef, 'DimensionPublisher cannot calculate a dimension when not attached to the DOM');
 
     const style = window.getComputedStyle(targetRef);
-
     const margin: Margin = {
       top: parseInt(style.marginTop, 10),
       right: parseInt(style.marginRight, 10),
       bottom: parseInt(style.marginBottom, 10),
       left: parseInt(style.marginLeft, 10),
     };
-
     const dimension: DroppableDimension = getDroppableDimension({
       id: droppableId,
       clientRect: targetRef.getBoundingClientRect(),
@@ -53,7 +52,6 @@ export default class DroppableDimensionPublisher extends Component {
       windowScroll: getWindowScrollPosition(),
       scroll: this.getScrollOffset(),
     });
-
     return dimension;
   }
 
@@ -106,27 +104,19 @@ export default class DroppableDimensionPublisher extends Component {
 
   // TODO: componentDidUpdate?
   componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.targetRef !== this.props.targetRef) {
-      if (this.isWatchingScroll) {
-        console.warn('changing targetRef while watching scroll!');
-        this.unwatchScroll();
-      }
-    }
+ 
 
     // Because the dimension publisher wraps children - it might render even when its props do
     // not change. We need to ensure that it does not publish when it should not.
     const shouldPublish = !this.props.shouldPublish && nextProps.shouldPublish;
-
     // should no longer watch for scrolling
     if (!nextProps.shouldPublish) {
       this.unwatchScroll();
       return;
     }
-
     if (!shouldPublish) {
       return;
     }
-
     // discovering the closest scrollable for a drag
     this.closestScrollable = getClosestScrollable(this.props.targetRef);
     this.props.publish(this.getDimension());

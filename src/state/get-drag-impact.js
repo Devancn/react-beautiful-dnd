@@ -51,11 +51,9 @@ export default ({
     droppableDimension,
     draggables,
   );
-
   // not considering margin so that items move based on visible edges
   const draggableCenter: Position = draggingDimension.page.withoutMargin.center;
   const isMovingForward: boolean = newCenter.y - draggableCenter.y > 0;
-
   const moved: DraggableId[] = insideDroppable
     .filter((dimension: DraggableDimension): boolean => {
       // do not want to move the item that is dragging
@@ -84,7 +82,6 @@ export default ({
       return newCenter.y < fragment.bottom;
     })
     .map((dimension: DraggableDimension): DroppableId => dimension.id);
-
   const startIndex = insideDroppable.indexOf(draggingDimension);
   const index: number = (() => {
     if (!moved.length) {

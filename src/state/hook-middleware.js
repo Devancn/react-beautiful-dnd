@@ -11,7 +11,6 @@ const getFireHooks = (hooks: Hooks) =>
 
     // Drag start
     if (currentPhase === "DRAGGING" && previousPhase !== "DRAGGING") {
-      console.log("DRAGGING");
       // onDragStart is optional
       if (!onDragStart) {
         return;
@@ -31,7 +30,6 @@ const getFireHooks = (hooks: Hooks) =>
 
     // Drag end
     if (currentPhase === "DROP_COMPLETE" && previousPhase !== "DROP_COMPLETE") {
-      console.log("DROP_COMPLETE || Drag end");
       if (!current.drop || !current.drop.result) {
         console.error("cannot fire onDragEnd hook without drag state", {
           current,
@@ -39,13 +37,13 @@ const getFireHooks = (hooks: Hooks) =>
         });
         return;
       }
-
       const { source, destination, draggableId } = current.drop.result;
 
-      if (!destination) {
-        onDragEnd(current.drop.result);
-        return;
-      }
+      // if (!destination) {
+      //   console.log('sdfsdfsdfsd')
+      //   onDragEnd(current.drop.result);
+      //   return;
+      // }
 
       // Do not publish a result where nothing moved
       const didMove: boolean =
@@ -53,54 +51,52 @@ const getFireHooks = (hooks: Hooks) =>
         source.index !== destination.index;
 
       if (didMove) {
+      
         onDragEnd(current.drop.result);
         return;
       }
+      // const muted: DropResult = {
+      //   draggableId,
+      //   source,
+      //   destination: null,
+      // };
 
-      const muted: DropResult = {
-        draggableId,
-        source,
-        destination: null,
-      };
-
-      onDragEnd(muted);
+      // onDragEnd(muted);
     }
 
     // Drag cancelled while dragging
-    if (currentPhase === "IDLE" && previousPhase === "DRAGGING") {
-      console.log("Drag cancelled");
-      if (!previous.drag) {
-        console.error(
-          "cannot fire onDragEnd for cancel because cannot find previous drag"
-        );
-        return;
-      }
-      const result: DropResult = {
-        draggableId: previous.drag.current.id,
-        source: previous.drag.initial.source,
-        destination: null,
-      };
-      onDragEnd(result);
-    }
+    // if (currentPhase === "IDLE" && previousPhase === "DRAGGING") {
+    //   if (!previous.drag) {
+    //     console.error(
+    //       "cannot fire onDragEnd for cancel because cannot find previous drag"
+    //     );
+    //     return;
+    //   }
+    //   const result: DropResult = {
+    //     draggableId: previous.drag.current.id,
+    //     source: previous.drag.initial.source,
+    //     destination: null,
+    //   };
+    //   onDragEnd(result);
+    // }
 
     // Drag cancelled during a drop animation. Not super sure how this can even happen.
     // This is being really safe
-    if (currentPhase === "IDLE" && previousPhase === "DROP_ANIMATING") {
-      console.log("do not know");
-      if (!previous.drop || !previous.drop.pending) {
-        console.error(
-          "cannot fire onDragEnd for cancel because cannot find previous pending drop"
-        );
-        return;
-      }
+    // if (currentPhase === "IDLE" && previousPhase === "DROP_ANIMATING") {
+    //   if (!previous.drop || !previous.drop.pending) {
+    //     console.error(
+    //       "cannot fire onDragEnd for cancel because cannot find previous pending drop"
+    //     );
+    //     return;
+    //   }
 
-      const result: DropResult = {
-        draggableId: previous.drop.pending.result.draggableId,
-        source: previous.drop.pending.result.source,
-        destination: null,
-      };
-      onDragEnd(result);
-    }
+    //   const result: DropResult = {
+    //     draggableId: previous.drop.pending.result.draggableId,
+    //     source: previous.drop.pending.result.source,
+    //     destination: null,
+    //   };
+    //   onDragEnd(result);
+    // }
   });
 
 export default (hooks: Hooks) => {
@@ -115,7 +111,5 @@ export default (hooks: Hooks) => {
       const current: State = store.getState();
 
       fireHooks(current, previous);
-
-      return result;
     };
 };
