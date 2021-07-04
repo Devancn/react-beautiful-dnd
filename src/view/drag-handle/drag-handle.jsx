@@ -98,7 +98,6 @@ export default class DragHandle extends Component {
   onWindowMouseMove = (event: MouseEvent) => {
     const {pending } = this.state;
     const { clientX, clientY } = event;
-    
     const point: Position = {
       x: clientX,
       y: clientY,

@@ -105,7 +105,7 @@ export const getDraggableDimension = ({
       withMargin: getFragment(withScrollAndMargin),
     },
   };
-
+  console.log(dimension, 'dimension')
   return dimension;
 };
 

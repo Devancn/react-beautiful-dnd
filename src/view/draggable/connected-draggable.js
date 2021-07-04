@@ -1,14 +1,14 @@
 // @flow
-import memoizeOne from 'memoize-one';
-import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
+import memoizeOne from "memoize-one";
+import { connect } from "react-redux";
+import { createSelector } from "reselect";
 import {
   dragSelector,
   pendingDropSelector,
   phaseSelector,
-} from '../../state/selectors';
-import Draggable from './draggable';
-import { storeKey } from '../context-keys';
+} from "../../state/selectors";
+import Draggable from "./draggable";
+import { storeKey } from "../context-keys";
 import {
   lift as liftAction,
   move as moveAction,
@@ -18,7 +18,7 @@ import {
   cancel as cancelAction,
   dropAnimationFinished as dropAnimationFinishedAction,
   moveByWindowScroll as moveByWindowScrollAction,
-} from '../../state/action-creators';
+} from "../../state/action-creators";
 import type {
   State,
   Position,
@@ -28,12 +28,8 @@ import type {
   Phase,
   DragMovement,
   DraggableDimension,
-} from '../../types';
-import type {
-  MapProps,
-  OwnProps,
-  DispatchProps,
-} from './draggable-types';
+} from "../../types";
+import type { MapProps, OwnProps, DispatchProps } from "./draggable-types";
 
 const origin: Position = { x: 0, y: 0 };
 
@@ -52,29 +48,29 @@ const defaultMapProps: MapProps = {
 export const makeSelector = () => {
   const idSelector = (state: State, ownProps: OwnProps) => ownProps.draggableId;
 
-  const memoizedOffset = memoizeOne(
-    (x: number, y: number): Position => ({
-      x, y,
-    }),
-  );
+  const memoizedOffset = memoizeOne((x: number, y: number): Position => ({
+    x,
+    y,
+  }));
 
   const getWithMovement = memoizeOne(
     (offset: Position, isAnotherDragging: boolean): MapProps => {
-      return ({
+      return {
         isDropAnimating: false,
         isDragging: false,
         canAnimate: true,
         isAnotherDragging,
         offset,
         dimension: null,
-      })
-    },
+      };
+    }
   );
 
   const getNotDraggingProps = memoizeOne(
-    (draggableId: DraggableId,
+    (
+      draggableId: DraggableId,
       movement: DragMovement,
-      isAnotherDragging: boolean,
+      isAnotherDragging: boolean
     ): MapProps => {
       const needsToMove = movement.draggables.indexOf(draggableId) !== -1;
 
@@ -82,22 +78,27 @@ export const makeSelector = () => {
         return getWithMovement(origin, isAnotherDragging);
       }
 
-      const amount = movement.isMovingForward ? -movement.amount : movement.amount;
-
-
+      const amount = movement.isMovingForward
+        ? -movement.amount
+        : movement.amount;
+      
       return getWithMovement(
         // currently not handling horizontal movement
         memoizedOffset(0, amount),
-        isAnotherDragging,
+        isAnotherDragging
       );
-    },
+    }
   );
 
-  const draggableSelector = (state: State, ownProps: OwnProps): ?DraggableDimension => {
+  const draggableSelector = (
+    state: State,
+    ownProps: OwnProps
+  ): ?DraggableDimension => {
     if (!state.dimension) {
       return null;
     }
-    const dimension: ?DraggableDimension = state.dimension.draggable[ownProps.draggableId];
+    const dimension: ?DraggableDimension =
+      state.dimension.draggable[ownProps.draggableId];
 
     // dimension might not be published yet
     if (!dimension) {
@@ -115,39 +116,40 @@ export const makeSelector = () => {
       pendingDropSelector,
       draggableSelector,
     ],
-    (id: DraggableId,
+    (
+      id: DraggableId,
       phase: Phase,
       drag: ?DragState,
       pending: ?PendingDrop,
-      dimension: ?DraggableDimension,
+      dimension: ?DraggableDimension
     ): MapProps => {
-      if (phase === 'DRAGGING') {
+      if (phase === "DRAGGING") {
         const { current, impact } = drag;
         if (current.id !== id) {
           const result = getNotDraggingProps(
             id,
             impact.movement,
             // blocking pointer events while something else is dragging
-            true,
+            true
           );
-          return result
+          return result;
         }
         // this item is dragging
         const offset: Position = current.client.offset;
-        const canAnimate: boolean = current.shouldAnimate;
         // not memoizing result as it should not move without an update
         return {
           isDragging: true,
           isAnotherDragging: false,
           isDropAnimating: false,
-          canAnimate,
+          canAnimate: false,
           offset,
           dimension,
         };
       }
+
       // All unhandled phases
       return defaultMapProps;
-    },
+    }
   );
 };
 
@@ -170,10 +172,6 @@ const mapDispatchToProps: DispatchProps = {
 // Leaning heavily on the default shallow equality checking
 // that `connect` provides.
 // It avoids needing to do it own within `Draggable`
-export default connect(
-  makeMapStateToProps(),
-  mapDispatchToProps,
-  null,
-  { storeKey },
-)(Draggable);
-
+export default connect(makeMapStateToProps(), mapDispatchToProps, null, {
+  storeKey,
+})(Draggable);

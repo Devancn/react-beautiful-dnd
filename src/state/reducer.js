@@ -95,19 +95,14 @@ const move = ({
     droppable.scroll.initial,
     droppable.scroll.current
   );
-
   const withinDroppable: WithinDroppable = {
     center: add(page.center, negate(scrollDiff)),
   };
-  const currentWindowScroll: Position = windowScroll || previous.windowScroll;
   const current: CurrentDrag = {
     id: previous.id,
     type: previous.type,
     client,
-    page,
-    withinDroppable,
-    shouldAnimate,
-    windowScroll: currentWindowScroll,
+    page
   };
 
   const impact: DragImpact = getDragImpact({
@@ -117,6 +112,7 @@ const move = ({
     draggables: state.dimension.draggable,
     droppables: state.dimension.droppable,
   });
+  
   const drag: DragState = {
     initial,
     impact,
@@ -199,7 +195,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
       windowScroll,
       withinDroppable,
     };
-    
     const current: CurrentDrag = {
       id,
       type,
@@ -277,87 +272,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
     });
   }
 
-  if (action.type === "MOVE_BY_WINDOW_SCROLL") {
-    const { windowScroll } = action.payload;
-
-
-    const initial: InitialDrag = state.drag.initial;
-    const current: CurrentDrag = state.drag.current;
-    const client: Position = current.client.selection;
-
-    // diff between the previous scroll position and the initial
-    const previousDiff: Position = subtract(
-      current.windowScroll,
-      initial.windowScroll
-    );
-    // diff between the current scroll position and the initial
-    const currentDiff: Position = subtract(windowScroll, initial.windowScroll);
-    // diff required to move from previous diff to new diff
-    const diff: Position = subtract(currentDiff, previousDiff);
-    // move the page coordinate by that amount
-    const page: Position = add(current.page.selection, diff);
-
-    return move({
-      state,
-      clientSelection: client,
-      pageSelection: page,
-      windowScroll,
-    });
-  }
-
-  if (action.type === "MOVE_FORWARD" || action.type === "MOVE_BACKWARD") {
-   
-    const existing: DragState = state.drag;
-
-
-
-    const isMovingForward: boolean = action.type === "MOVE_FORWARD";
-
-    const diff: ?Position = getDiffToJumpToNextIndex({
-      isMovingForward,
-      draggableId: existing.current.id,
-      location: existing.impact.destination,
-      draggables: state.dimension.draggable,
-      droppables: state.dimension.droppable,
-    });
-
-    // cannot move anyway (at the beginning or end of a list)
-    if (!diff) {
-      return state;
-    }
-
-    const page: Position = add(existing.current.page.selection, diff);
-    const client: Position = add(existing.current.client.selection, diff);
-
-    // current limitation: cannot go beyond visible border of list
-    return move({
-      state,
-      clientSelection: client,
-      pageSelection: page,
-      shouldAnimate: true,
-    });
-  }
-
-  if (action.type === "DROP_ANIMATE") {
-    const { newHomeOffset, result } = action.payload;
-
-    const pending: PendingDrop = {
-      newHomeOffset,
-      result,
-      last: state.drag,
-    };
-
-    return {
-      phase: "DROP_ANIMATING",
-      drag: null,
-      drop: {
-        pending,
-        result: null,
-      },
-      dimension: state.dimension,
-    };
-  }
-
   if (action.type === "DROP_COMPLETE") {
     const result: DropResult = action.payload;
 
@@ -372,9 +286,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
     };
   }
 
-  if (action.type === "CANCEL") {
-    return clean();
-  }
 
   return state;
 };

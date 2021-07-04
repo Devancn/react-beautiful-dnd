@@ -179,6 +179,7 @@ export default class Draggable extends Component {
       dragHandleProps: ?DragHandleProvided,
       movementStyle: MovementStyle,
     ): Provided => {
+      console.log();
       const useDraggingStyle: boolean = isDragging || isDropAnimating;
 
       const draggableStyle: DraggableStyle = (() => {

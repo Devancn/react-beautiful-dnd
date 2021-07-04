@@ -37,6 +37,7 @@ export default ({
   const droppableId: ?DroppableId = getDroppableOver(
     page, droppables,
   );
+
   // not dragging over anything
   if (!droppableId) {
     return noImpact;

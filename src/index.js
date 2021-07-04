@@ -18,15 +18,17 @@ const reorder = (list, startIndex, endIndex) => {
 };
 
 const grid = 8;
-const getItemStyle = (draggableStyle, isDragging) => ({
-  userSelect: "none",
-  padding: grid * 2,
-  marginBottom: grid,
-
-  background: isDragging ? "lightgreen" : "grey",
-
-  ...draggableStyle,
-});
+const getItemStyle = (draggableStyle, isDragging) => {
+ return ({
+    userSelect: "none",
+    padding: grid * 2,  
+    marginBottom: grid,
+  
+    background: isDragging ? "lightgreen" : "grey",
+  
+    ...draggableStyle,
+  })
+};
 const getListStyle = (isDraggingOver) => ({
   background: isDraggingOver ? "lightblue" : "lightgrey",
   padding: grid,
@@ -47,7 +49,7 @@ class App extends React.Component {
     if (!result.destination) {
       return;
     }
-    const items = reorder(
+     const items = reorder(
       this.state.items,
       result.source.index,
       result.destination.index
