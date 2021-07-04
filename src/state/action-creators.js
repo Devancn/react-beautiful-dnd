@@ -198,33 +198,34 @@ export const drop = (id: DraggableId) =>
   (dispatch: Dispatch, getState: () => State): void => {
     const state: State = getState();
     const { impact, initial, current } = state.drag;
-    const droppable: DroppableDimension = state.dimension.droppable[initial.source.droppableId];
+    // const droppable: DroppableDimension = state.dimension.droppable[initial.source.droppableId];
     const result: DropResult = {
       draggableId: current.id,
       source: initial.source,
       destination: impact.destination,
     };
 
-    const scrollDiff: Position = subtract(droppable.scroll.initial, droppable.scroll.current);
-    const newHomeOffset: Position = getNewHomeClientOffset({
-      movement: impact.movement,
-      clientOffset: current.client.offset,
-      pageOffset: current.page.offset,
-      scrollDiff,
-      draggables: state.dimension.draggable,
-    });
+    // const scrollDiff: Position = subtract(droppable.scroll.initial, droppable.scroll.current);
+    // const newHomeOffset: Position = getNewHomeClientOffset({
+    //   movement: impact.movement,
+    //   clientOffset: current.client.offset,
+    //   pageOffset: current.page.offset,
+    //   scrollDiff,
+    //   draggables: state.dimension.draggable,
+    // });
     // Do not animate if you do not need to.
     // This will be the case if either you are dragging with a
     // keyboard or if you manage to nail it just with a mouse.
-    const isAnimationRequired = !isEqual(
-      current.client.offset,
-      newHomeOffset,
-    );
+    // const isAnimationRequired = !isEqual(
+    //   current.client.offset,
+    //   newHomeOffset,
+    // );
 
-    if (isAnimationRequired) {
-      dispatch(animateDrop(newHomeOffset, result));
-      return;
-    }
+    // if (isAnimationRequired) {
+    //   dispatch(animateDrop(newHomeOffset, result));
+    //   return;
+    // }
+    console.log(result,'result');
     dispatch(completeDrop(result));
   };
 

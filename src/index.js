@@ -47,7 +47,6 @@ class App extends React.Component {
     if (!result.destination) {
       return;
     }
-
     const items = reorder(
       this.state.items,
       result.source.index,

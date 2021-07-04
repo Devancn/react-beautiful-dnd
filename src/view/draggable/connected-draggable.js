@@ -122,7 +122,6 @@ export const makeSelector = () => {
       dimension: ?DraggableDimension,
     ): MapProps => {
       if (phase === 'DRAGGING') {
-       
         const { current, impact } = drag;
         if (current.id !== id) {
           const result = getNotDraggingProps(
@@ -146,34 +145,6 @@ export const makeSelector = () => {
           dimension,
         };
       }
-
-      if (phase === 'DROP_ANIMATING') {
-        if (!pending) {
-          console.error('cannot animate drop without a pending drop');
-          return defaultMapProps;
-        }
-
-        if (pending.last.current.id !== id) {
-          return getNotDraggingProps(
-            id,
-            pending.last.impact.movement,
-            // We are indicating that nothing else is dragging while a drop is
-            // occurring
-            false,
-          );
-        }
-
-        return {
-          isDragging: false,
-          isDropAnimating: true,
-          isAnotherDragging: false,
-          canAnimate: true,
-          offset: pending.newHomeOffset,
-          // still need to provide the dimension for the placeholder
-          dimension,
-        };
-      }
-
       // All unhandled phases
       return defaultMapProps;
     },

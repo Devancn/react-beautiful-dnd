@@ -62,9 +62,7 @@ export default class Movable extends Component {
   getFinal = (): PositionLike => {
     const destination: Position = this.props.destination;
     const speed = this.props.speed;
-    return destination;
     if (speed === 'INSTANT') {
-      
       return destination;
     }
     const selected = speed === 'FAST' ? physics.fast : physics.standard;

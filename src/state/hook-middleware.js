@@ -30,15 +30,7 @@ const getFireHooks = (hooks: Hooks) =>
 
     // Drag end
     if (currentPhase === "DROP_COMPLETE" && previousPhase !== "DROP_COMPLETE") {
-      if (!current.drop || !current.drop.result) {
-        console.error("cannot fire onDragEnd hook without drag state", {
-          current,
-          previous,
-        });
-        return;
-      }
       const { source, destination, draggableId } = current.drop.result;
-
       // if (!destination) {
       //   console.log('sdfsdfsdfsd')
       //   onDragEnd(current.drop.result);
@@ -46,6 +38,8 @@ const getFireHooks = (hooks: Hooks) =>
       // }
 
       // Do not publish a result where nothing moved
+      onDragEnd(current.drop.result);
+      return;
       const didMove: boolean =
         source.droppableId !== destination.droppableId ||
         source.index !== destination.index;
