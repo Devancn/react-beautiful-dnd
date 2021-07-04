@@ -37,7 +37,6 @@ export default ({
   const droppableId: ?DroppableId = getDroppableOver(
     page, droppables,
   );
-
   // not dragging over anything
   if (!droppableId) {
     return noImpact;
@@ -46,7 +45,6 @@ export default ({
   const newCenter = withinDroppable.center;
   const draggingDimension: DraggableDimension = draggables[draggableId];
   const droppableDimension: DroppableDimension = droppables[droppableId];
-
   const insideDroppable: DraggableDimension[] = getDraggablesInsideDroppable(
     droppableDimension,
     draggables,
@@ -62,7 +60,6 @@ export default ({
       }
 
       const fragment: DimensionFragment = dimension.page.withoutMargin;
-
       if (isMovingForward) {
         // 1. item needs to start ahead of the moving item
         // 2. the dragging item has moved over it
@@ -78,7 +75,6 @@ export default ({
       if (draggableCenter.y < fragment.center.y) {
         return false;
       }
-
       return newCenter.y < fragment.bottom;
     })
     .map((dimension: DraggableDimension): DroppableId => dimension.id);
@@ -94,7 +90,6 @@ export default ({
     // is moving backwards
     return startIndex - moved.length;
   })();
-
   const amount = index !== startIndex ?
     // need to ensure that the whole item is moved
     draggingDimension.page.withMargin.height :
@@ -105,7 +100,6 @@ export default ({
     draggables: moved,
     isMovingForward,
   };
-
   const impact: DragImpact = {
     movement,
     destination: {
@@ -113,6 +107,5 @@ export default ({
       index,
     },
   };
-
   return impact;
 };

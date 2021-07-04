@@ -109,7 +109,6 @@ export default (hooks: Hooks) => {
       const result: mixed = next(action);
 
       const current: State = store.getState();
-
       fireHooks(current, previous);
     };
 };

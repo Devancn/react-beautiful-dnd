@@ -19,7 +19,6 @@ export default class DraggableDimensionPublisher extends Component {
       targetRef,
     } = this.props;
 
-    invariant(targetRef, 'DraggableDimensionPublisher cannot calculate a dimension when not attached to the DOM');
 
     const style = window.getComputedStyle(targetRef);
 

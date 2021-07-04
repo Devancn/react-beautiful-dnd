@@ -5,8 +5,8 @@ import type {
   DraggableDimension,
   DraggableDimensionMap,
   DraggableId,
-} from '../types';
-import { add, subtract } from './position';
+} from "../types";
+import { add, subtract } from "./position";
 
 type NewHomeArgs = {|
   movement: DragMovement,
@@ -14,7 +14,7 @@ type NewHomeArgs = {|
   pageOffset: Position,
   scrollDiff: Position,
   draggables: DraggableDimensionMap,
-|}
+|};
 
 type ClientOffset = Position;
 
@@ -37,25 +37,28 @@ export default ({
     (previous: number, draggableId: DraggableId): number => {
       const dimension: DraggableDimension = draggables[draggableId];
       return previous + dimension.page.withMargin.height;
-    }, 0);
+    },
+    0
+  );
 
   const amount: number = movement.isMovingForward ? distance : -distance;
-
   // How much distance the item needs to travel to be in its new home
   // from where it started
+
   const verticalChange: Position = {
     x: 0,
     y: amount,
   };
-
   // How far away it is on the page from where it needs to be
+  console.log(pageOffset, "pageOffset");
+  console.log(verticalChange,'verticalChange');
   const verticalDiff: Position = subtract(verticalChange, pageOffset);
+  console.log(verticalDiff,'verticalDiff');
 
   // The final client offset
   const client: Position = add(verticalDiff, clientOffset);
 
   // Accounting for container scroll
   const withScroll: Position = add(client, scrollDiff);
-
   return withScroll;
 };

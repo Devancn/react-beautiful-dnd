@@ -60,18 +60,9 @@ const move = ({
   shouldAnimate = false,
   windowScroll,
 }: MoveArgs): State => {
-  if (state.phase !== "DRAGGING") {
-    console.error("cannot move while not dragging");
-    return clean();
-  }
-
-  if (state.drag == null) {
-    console.error("cannot move if there is no drag information");
-    return clean();
-  }
-
   const previous: CurrentDrag = state.drag.current;
   const initial: InitialDrag = state.drag.initial;
+
   const droppable: DroppableDimension =
     state.dimension.droppable[initial.source.droppableId];
 
@@ -89,7 +80,6 @@ const move = ({
     };
     return result;
   })();
-
   const page: CurrentDragLocation = (() => {
     const offset: Position = subtract(pageSelection, initial.page.selection);
     const center: Position = add(offset, initial.page.center);
@@ -101,7 +91,6 @@ const move = ({
     };
     return result;
   })();
-
   const scrollDiff: Position = subtract(
     droppable.scroll.initial,
     droppable.scroll.current
@@ -110,9 +99,7 @@ const move = ({
   const withinDroppable: WithinDroppable = {
     center: add(page.center, negate(scrollDiff)),
   };
-
   const currentWindowScroll: Position = windowScroll || previous.windowScroll;
-
   const current: CurrentDrag = {
     id: previous.id,
     type: previous.type,
@@ -130,13 +117,11 @@ const move = ({
     draggables: state.dimension.draggable,
     droppables: state.dimension.droppable,
   });
-
   const drag: DragState = {
     initial,
     impact,
     current,
   };
-
   return {
     ...state,
     drag,
@@ -144,21 +129,11 @@ const move = ({
 };
 
 export default (state: State = clean("IDLE"), action: Action): State => {
-  console.log(action, 'action');
   if (action.type === "BEGIN_LIFT") {
-    if (state.phase !== "IDLE") {
-      console.error("trying to start a lift while another is occurring");
-      return state;
-    }
     return clean("COLLECTING_DIMENSIONS");
   }
 
   if (action.type === "REQUEST_DIMENSIONS") {
-    if (state.phase !== "COLLECTING_DIMENSIONS") {
-      console.error("trying to collect dimensions at the wrong time");
-      return state;
-    }
-
     const typeId: TypeId = action.payload;
     return {
       phase: "COLLECTING_DIMENSIONS",
@@ -175,18 +150,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
   if (action.type === "PUBLISH_DRAGGABLE_DIMENSION") {
     const dimension: DraggableDimension = action.payload;
 
-    if (state.phase !== "COLLECTING_DIMENSIONS") {
-      console.warn(
-        "dimension rejected as no longer requesting dimensions",
-        dimension
-      );
-      return state;
-    }
-
-    if (state.dimension.draggable[dimension.id]) {
-      console.error(`dimension already exists for ${dimension.id}`);
-      return state;
-    }
     return {
       ...state,
       dimension: {
@@ -202,20 +165,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
 
   if (action.type === "PUBLISH_DROPPABLE_DIMENSION") {
     const dimension: DroppableDimension = action.payload;
-
-    if (state.phase !== "COLLECTING_DIMENSIONS") {
-      console.warn(
-        "dimension rejected as no longer requesting dimensions",
-        dimension
-      );
-      return state;
-    }
-
-    if (state.dimension.droppable[dimension.id]) {
-      console.error(`dimension already exists for ${dimension.id}`);
-      return state;
-    }
-
     return {
       ...state,
       dimension: {
@@ -230,13 +179,7 @@ export default (state: State = clean("IDLE"), action: Action): State => {
   }
 
   if (action.type === "COMPLETE_LIFT") {
-    if (state.phase !== "COLLECTING_DIMENSIONS") {
-      console.error("trying complete lift without collecting dimensions");
-      return state;
-    }
-
     const { id, type, client, page, windowScroll } = action.payload;
-
     // no scroll diff yet so withinDroppable is just the center position
     const withinDroppable: WithinDroppable = {
       center: page.center,
@@ -249,11 +192,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
       droppables: state.dimension.droppable,
     });
     const source: ?DraggableLocation = impact.destination;
-
-    if (!source) {
-      console.error("lifting a draggable that is not inside a droppable");
-      return clean();
-    }
     const initial: InitialDrag = {
       source,
       client,
@@ -261,7 +199,7 @@ export default (state: State = clean("IDLE"), action: Action): State => {
       windowScroll,
       withinDroppable,
     };
-
+    
     const current: CurrentDrag = {
       id,
       type,
@@ -279,7 +217,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
       windowScroll,
       shouldAnimate: false,
     };
-
     return {
       ...state,
       phase: "DRAGGING",
@@ -292,29 +229,11 @@ export default (state: State = clean("IDLE"), action: Action): State => {
   }
 
   if (action.type === "UPDATE_DROPPABLE_DIMENSION_SCROLL") {
-    if (state.phase !== "DRAGGING") {
-      console.error(
-        "cannot update a droppable dimensions scroll when not dragging"
-      );
-      return clean();
-    }
-
-    if (state.drag == null) {
-      console.error("invalid store state");
-      return clean();
-    }
 
     const { id, offset } = action.payload;
 
     const target: ?DroppableDimension = state.dimension.droppable[id];
 
-    if (!target) {
-      console.error(
-        "cannot update a droppable that is not inside of the state",
-        id
-      );
-      return clean();
-    }
 
     // TODO: do not break an existing dimension.
     // Rather, have a different structure to store the scroll
@@ -361,10 +280,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
   if (action.type === "MOVE_BY_WINDOW_SCROLL") {
     const { windowScroll } = action.payload;
 
-    if (!state.drag) {
-      console.error("cannot move with window scrolling if no current drag");
-      return clean();
-    }
 
     const initial: InitialDrag = state.drag.initial;
     const current: CurrentDrag = state.drag.current;
@@ -391,22 +306,10 @@ export default (state: State = clean("IDLE"), action: Action): State => {
   }
 
   if (action.type === "MOVE_FORWARD" || action.type === "MOVE_BACKWARD") {
-    if (state.phase !== "DRAGGING") {
-      console.error("cannot move while not dragging", action);
-      return clean();
-    }
-
-    if (!state.drag) {
-      console.error("cannot move if there is no drag information");
-      return clean();
-    }
-
+   
     const existing: DragState = state.drag;
 
-    if (!existing.impact.destination) {
-      console.warn("cannot move forward when there is not previous location");
-      return state;
-    }
+
 
     const isMovingForward: boolean = action.type === "MOVE_FORWARD";
 
@@ -427,19 +330,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
     const client: Position = add(existing.current.client.selection, diff);
 
     // current limitation: cannot go beyond visible border of list
-    const droppableId: ?DroppableId = getDroppableOver(
-      page,
-      state.dimension.droppable
-    );
-
-    if (!droppableId) {
-      // eslint-disable-next-line no-console
-      console.info(
-        "currently not supporting moving a draggable outside the visibility bounds of a droppable"
-      );
-      return state;
-    }
-
     return move({
       state,
       clientSelection: client,
@@ -450,16 +340,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
 
   if (action.type === "DROP_ANIMATE") {
     const { newHomeOffset, result } = action.payload;
-
-    if (state.phase !== "DRAGGING") {
-      console.error("cannot animate drop while not dragging", action);
-      return state;
-    }
-
-    if (!state.drag) {
-      console.error("cannot animate drop - invalid drag state");
-      return clean();
-    }
 
     const pending: PendingDrop = {
       newHomeOffset,

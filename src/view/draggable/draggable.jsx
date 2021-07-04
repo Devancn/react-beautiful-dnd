@@ -72,24 +72,9 @@ export default class Draggable extends Component {
       onLift: this.onLift,
       onMove: this.onMove,
       onDrop: this.onDrop,
-      onCancel: this.onCancel,
-      onKeyLift: this.onKeyLift,
-      onMoveBackward: this.onMoveBackward,
-      onMoveForward: this.onMoveForward,
-      onWindowScroll: this.onWindowScroll,
     };
   }
 
-  // This should already be handled gracefully in DragHandle.
-  // Just being extra clear here
-  throwIfCannotDrag() {
-    invariant(this.state.ref,
-      'Draggable: cannot drag as no DOM node has been provided'
-    );
-    invariant(!this.props.isDragDisabled,
-      'Draggable: cannot drag as dragging is not enabled'
-    );
-  }
 
   onMoveEnd = () => {
     if (!this.props.isDropAnimating) {
@@ -114,83 +99,23 @@ export default class Draggable extends Component {
     };
     lift(draggableId, type, client, page, windowScroll);
   }
-
-  onKeyLift = () => {
-    this.throwIfCannotDrag();
-    const { lift, draggableId, type } = this.props;
-    const { ref } = this.state;
-
-    // using center position as selection
-    const center: Position = getCenterPosition(ref);
-
-    const client: InitialDragLocation = {
-      selection: center,
-      center,
-    };
-
-    const windowScroll: Position = getWindowScrollPosition();
-    const page: InitialDragLocation = {
-      selection: add(center, windowScroll),
-      center: add(center, windowScroll),
-    };
-
-    lift(draggableId, type, client, page, windowScroll);
-  }
-
   onMove = (client: Position) => {
-    this.throwIfCannotDrag();
     const { draggableId, dimension, move } = this.props;
-    // dimensions not provided yet
-    if (!dimension) {
-      return;
-    }
-
     const windowScroll: Position = getWindowScrollPosition();
     const page: Position = add(client, windowScroll);
-
     move(draggableId, client, page, windowScroll);
   }
 
-  onMoveForward = () => {
-    this.throwIfCannotDrag();
-    this.props.moveForward(this.props.draggableId);
-  }
-
-  onMoveBackward = () => {
-    this.throwIfCannotDrag();
-    this.props.moveBackward(this.props.draggableId);
-  }
-
-  onWindowScroll = () => {
-    this.throwIfCannotDrag();
-    const windowScroll = getWindowScrollPosition();
-    this.props.moveByWindowScroll(this.props.draggableId, windowScroll);
-  }
 
   onDrop = () => {
-    this.throwIfCannotDrag();
     this.props.drop(this.props.draggableId);
   }
 
-  onCancel = () => {
-    // Not checking if drag is enabled.
-    // Cancel is an escape mechanism
-    this.props.cancel(this.props.draggableId);
-  }
 
   // React calls ref callback twice for every render
   // https://github.com/facebook/react/pull/8333/files
   setRef = ((ref: ?HTMLElement) => {
-    // TODO: need to clear this.state.ref on unmount
-    if (ref === null) {
-      return;
-    }
 
-    if (ref === this.state.ref) {
-      return;
-    }
-
-    // need to trigger a child render when ref changes
     this.setState({
       ref,
     });
@@ -198,7 +123,6 @@ export default class Draggable extends Component {
 
   getPlaceholder() {
     const dimension: ?DraggableDimension = this.props.dimension;
-    invariant(dimension, 'cannot get a drag placeholder when not dragging');
 
     return (
       <Placeholder
@@ -265,7 +189,6 @@ export default class Draggable extends Component {
             isAnotherDragging,
           );
         }
-        invariant(dimension, 'draggable dimension required for dragging');
 
         const { width, height, top, left } = dimension.client.withoutMargin;
         return this.getDraggingStyle(width, height, top, left, isDropAnimating, movementStyle);

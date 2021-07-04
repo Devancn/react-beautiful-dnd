@@ -59,14 +59,16 @@ export const makeSelector = () => {
   );
 
   const getWithMovement = memoizeOne(
-    (offset: Position, isAnotherDragging: boolean): MapProps => ({
-      isDropAnimating: false,
-      isDragging: false,
-      canAnimate: true,
-      isAnotherDragging,
-      offset,
-      dimension: null,
-    }),
+    (offset: Position, isAnotherDragging: boolean): MapProps => {
+      return ({
+        isDropAnimating: false,
+        isDragging: false,
+        canAnimate: true,
+        isAnotherDragging,
+        offset,
+        dimension: null,
+      })
+    },
   );
 
   const getNotDraggingProps = memoizeOne(
@@ -81,6 +83,7 @@ export const makeSelector = () => {
       }
 
       const amount = movement.isMovingForward ? -movement.amount : movement.amount;
+
 
       return getWithMovement(
         // currently not handling horizontal movement
@@ -119,26 +122,20 @@ export const makeSelector = () => {
       dimension: ?DraggableDimension,
     ): MapProps => {
       if (phase === 'DRAGGING') {
-        if (!drag) {
-          console.error('invalid dragging state');
-          return defaultMapProps;
-        }
-
+       
         const { current, impact } = drag;
-
         if (current.id !== id) {
-          return getNotDraggingProps(
+          const result = getNotDraggingProps(
             id,
             impact.movement,
             // blocking pointer events while something else is dragging
             true,
           );
+          return result
         }
-
         // this item is dragging
         const offset: Position = current.client.offset;
         const canAnimate: boolean = current.shouldAnimate;
-
         // not memoizing result as it should not move without an update
         return {
           isDragging: true,

@@ -25,8 +25,6 @@ export default class Droppable extends Component {
     isDropDisabled: false,
   }
 
-  // Need to declare childContextTypes without flow
-  // https://github.com/brigand/babel-plugin-flow-react-proptypes/issues/22
   static childContextTypes = {
     [droppableIdKey]: PropTypes.string.isRequired,
   }
@@ -37,21 +35,8 @@ export default class Droppable extends Component {
     };
     return value;
   }
-  /* eslint-enable */
-
-  // React calls ref callback twice for every render
-  // https://github.com/facebook/react/pull/8333/files
+  
   setRef = (ref: ?HTMLElement) => {
-    // TODO: need to clear this.state.ref on unmount
-    if (ref === null) {
-      return;
-    }
-
-    if (ref === this.state.ref) {
-      return;
-    }
-
-    // need to trigger a child render when ref changes
     this.setState({
       ref,
     });
@@ -60,9 +45,6 @@ export default class Droppable extends Component {
   render() {
     const provided: Provided = {
       innerRef: this.setRef,
-    };
-    const snapshot: StateSnapshot = {
-      isDraggingOver: this.props.isDraggingOver,
     };
 
     return (
