@@ -35,7 +35,6 @@ export default class DragHandle extends Component {
     pending: null,
   };
 
-  preventClick: boolean
 
   ifDragging = (fn: Function) => {
     if (this.state.draggingWith) {
@@ -53,16 +52,6 @@ export default class DragHandle extends Component {
     this.ifDragging(() => this.memoizedMove(point.x, point.y));
   };
 
-  /* eslint-enable react/sort-comp */
-
-  componentWillUnmount() {
-    if (!this.state.draggingWith) {
-      return;
-    }
-    this.preventClick = false;
-    this.unbindWindowEvents();
-    this.props.callbacks.onCancel();
-  }
 
   onWindowResize = () => {
     if (this.state.pending) {
@@ -75,24 +64,6 @@ export default class DragHandle extends Component {
     }
 
     this.stopDragging(() => this.props.callbacks.onCancel());
-  }
-
-  onWindowScroll = () => {
-    const { draggingWith } = this.state;
-
-    if (!draggingWith) {
-      return;
-    }
-
-    if (draggingWith === 'MOUSE') {
-      this.scheduleWindowScrollMove();
-      return;
-    }
-
-    if (draggingWith === 'KEYBOARD') {
-      // currently not supporting window scrolling with a keyboard
-      this.stopDragging(() => this.props.callbacks.onCancel());
-    }
   }
 
   onWindowMouseMove = (event: MouseEvent) => {
@@ -110,15 +81,9 @@ export default class DragHandle extends Component {
   };
 
   onWindowMouseUp = () => {
-    // Allowing any event.button type to drop. Otherwise you
-    // might not get a corresponding mouseup with a mousedown.
-    // We could do a`cancel` if the button is not the primary.
     this.stopDragging(() => this.props.callbacks.onDrop());
   };
 
-  onWindowMouseDown = () => {
-    this.stopDragging(() => this.props.callbacks.onCancel());
-  }
 
   onMouseDown = (event: MouseEvent) => {
     const {clientX, clientY } = event;
@@ -156,8 +121,6 @@ export default class DragHandle extends Component {
 
   stopPendingMouseDrag = (done?: () => void = noop) => {
 
-    // we need to allow the click event to get through
-    this.preventClick = false;
 
     this.unbindWindowEvents();
     this.setState({
@@ -170,11 +133,6 @@ export default class DragHandle extends Component {
 
     this.unbindWindowEvents();
 
-    if (this.state.draggingWith === 'MOUSE') {
-    // Need to block any click actions
-      this.preventClick = true;
-    }
-
     const state: State = {
       draggingWith: null,
       pending: null,
@@ -185,7 +143,6 @@ export default class DragHandle extends Component {
   unbindWindowEvents = () => {
     window.removeEventListener('mousemove', this.onWindowMouseMove);
     window.removeEventListener('mouseup', this.onWindowMouseUp);
-    window.removeEventListener('mousedown', this.onWindowMouseDown);
   }
 
   bindWindowEvents = () => {

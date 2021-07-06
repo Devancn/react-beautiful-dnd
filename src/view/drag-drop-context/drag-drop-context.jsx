@@ -6,13 +6,6 @@ import createStore from '../../state/create-store';
 import type { Store, Hooks, ReactElement } from '../../types';
 import { storeKey } from '../context-keys';
 
-type Props = Hooks & {|
-  children?: ReactElement,
-|}
-
-type Context = {
-  [string]: Store
-}
 
 export default class DragDropContext extends Component {
   /* eslint-disable react/sort-comp */

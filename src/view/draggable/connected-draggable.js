@@ -56,9 +56,7 @@ export const makeSelector = () => {
   const getWithMovement = memoizeOne(
     (offset: Position, isAnotherDragging: boolean): MapProps => {
       return {
-        isDropAnimating: false,
         isDragging: false,
-        canAnimate: true,
         isAnotherDragging,
         offset,
         dimension: null,
@@ -113,14 +111,12 @@ export const makeSelector = () => {
       idSelector,
       phaseSelector,
       dragSelector,
-      pendingDropSelector,
       draggableSelector,
     ],
     (
       id: DraggableId,
       phase: Phase,
       drag: ?DragState,
-      pending: ?PendingDrop,
       dimension: ?DraggableDimension
     ): MapProps => {
       if (phase === "DRAGGING") {
@@ -140,8 +136,6 @@ export const makeSelector = () => {
         return {
           isDragging: true,
           isAnotherDragging: false,
-          isDropAnimating: false,
-          canAnimate: false,
           offset,
           dimension,
         };
@@ -161,12 +155,7 @@ const makeMapStateToProps = () => {
 const mapDispatchToProps: DispatchProps = {
   lift: liftAction,
   move: moveAction,
-  moveBackward: moveBackwardAction,
-  moveForward: moveForwardAction,
-  moveByWindowScroll: moveByWindowScrollAction,
   drop: dropAction,
-  dropAnimationFinished: dropAnimationFinishedAction,
-  cancel: cancelAction,
 };
 
 // Leaning heavily on the default shallow equality checking

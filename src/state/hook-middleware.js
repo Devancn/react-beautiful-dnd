@@ -8,54 +8,10 @@ const getFireHooks = (hooks: Hooks) =>
 
     const currentPhase = current.phase;
     const previousPhase = previous.phase;
-
-    // Drag start
-    if (currentPhase === "DRAGGING" && previousPhase !== "DRAGGING") {
-      // onDragStart is optional
-      if (!onDragStart) {
-        return;
-      }
-
-      if (!current.drag) {
-        console.error("cannot fire onDragStart hook without drag state", {
-          current,
-          previous,
-        });
-        return;
-      }
-
-      onDragStart(current.drag.current.id, current.drag.initial.source);
-      return;
-    }
-
     // Drag end
     if (currentPhase === "DROP_COMPLETE" && previousPhase !== "DROP_COMPLETE") {
-      const { source, destination, draggableId } = current.drop.result;
-      // if (!destination) {
-      //   console.log('sdfsdfsdfsd')
-      //   onDragEnd(current.drop.result);
-      //   return;
-      // }
-
-      // Do not publish a result where nothing moved
       onDragEnd(current.drop.result);
       return;
-      const didMove: boolean =
-        source.droppableId !== destination.droppableId ||
-        source.index !== destination.index;
-
-      if (didMove) {
-      
-        onDragEnd(current.drop.result);
-        return;
-      }
-      // const muted: DropResult = {
-      //   draggableId,
-      //   source,
-      //   destination: null,
-      // };
-
-      // onDragEnd(muted);
     }
 
     // Drag cancelled while dragging

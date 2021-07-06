@@ -26,13 +26,7 @@ const isAtOrigin = (point: PositionLike): boolean => {
 }
   
 
-const getStyle = (isNotMoving: boolean, x: number, y: number): Style => {
-  if (isNotMoving) {
-    return noMovement;
-  }
-
-  const point: Position = { x, y };
-  // not applying any transforms when not moving
+const getStyle = (point): Style => {
   if (isAtOrigin(point)) {
     return noMovement;
   }
@@ -51,43 +45,10 @@ export default class Movable extends Component {
   }
   /* eslint-enable */
 
-  onRest = () => {
-    const { onMoveEnd } = this.props;
-    if (!onMoveEnd) {
-      return;
-    }
-    setTimeout(() => onMoveEnd());
-  }
-
-  getFinal = (): PositionLike => {
-    const destination: Position = this.props.destination;
-    const speed = this.props.speed;
-    if (speed === 'INSTANT') {
-      return destination;
-    }
-    const selected = speed === 'FAST' ? physics.fast : physics.standard;
-    const x = spring(destination.x, selected);
-    const y =  spring(destination.y, selected)
-    return {
-      x,
-      y
-    };
-  }
 
   render() {
-    const final = this.getFinal();
-    const isNotMoving: boolean = isAtOrigin(final);
-    // return this.props.children(
-    //   getStyle(isNotMoving, final.x, final.y)
-    // )
-    return (
-      <Motion defaultStyle={origin} style={final} onRest={this.onRest}>
-        {(current: Position) => {
-          return this.props.children(
-            getStyle(isNotMoving, current.x, current.y)
-          )}
-        }
-      </Motion>
-    );
+    return this.props.children(
+      getStyle(this.props.destination)
+    )
   }
 }
