@@ -88,7 +88,6 @@ export const lift = (id: DraggableId,
   page: InitialDragLocation,
   windowScroll: Position,
 ) => (dispatch: Dispatch, getState: Function) => {
-    dispatch(beginLift());
     dispatch(requestDimensions(type));
     setTimeout(() => {
       dispatch(completeLift(id, type, client, page, windowScroll));

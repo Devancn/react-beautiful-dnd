@@ -19,10 +19,6 @@ const primaryButton = 0;
 // a drag rather than a click.
 export const sloppyClickThreshold: number = 5;
 
-type State = {
-  draggingWith: ?DragTypes,
-  pending: ?Position,
-};
 
 export default class DragHandle extends Component {
   /* eslint-disable react/sort-comp */
@@ -31,16 +27,9 @@ export default class DragHandle extends Component {
   state: State
 
   state: State = {
-    draggingWith: null,
     pending: null,
   };
 
-
-  ifDragging = (fn: Function) => {
-    if (this.state.draggingWith) {
-      fn();
-    }
-  }
 
   memoizedMove = memoizeOne((x: number, y: number) => {
     const point: Position = { x, y };
@@ -49,22 +38,9 @@ export default class DragHandle extends Component {
 
   // scheduled functions
   scheduleMove =(point: Position) => {
-    this.ifDragging(() => this.memoizedMove(point.x, point.y));
+    this.memoizedMove(point.x, point.y)
   };
 
-
-  onWindowResize = () => {
-    if (this.state.pending) {
-      this.stopPendingMouseDrag();
-      return;
-    }
-
-    if (!this.state.draggingWith) {
-      return;
-    }
-
-    this.stopDragging(() => this.props.callbacks.onCancel());
-  }
 
   onWindowMouseMove = (event: MouseEvent) => {
     const {pending } = this.state;
@@ -77,7 +53,10 @@ export default class DragHandle extends Component {
       this.scheduleMove(point);
       return;
     }
-    this.startDragging('MOUSE', () => this.props.callbacks.onLift(point));
+
+    this.setState( {
+      pending: null,
+    }, () => this.props.callbacks.onLift(point));
   };
 
   onWindowMouseUp = () => {
@@ -110,21 +89,11 @@ export default class DragHandle extends Component {
     this.setState(state);
   }
 
-  startDragging = (type: DragTypes, done?: () => void = noop) => {
-   
-    const state: State = {
-      draggingWith: type,
-      pending: null,
-    };
-    this.setState(state, done);
-  }
-
   stopPendingMouseDrag = (done?: () => void = noop) => {
 
 
     this.unbindWindowEvents();
     this.setState({
-      draggingWith: null,
       pending: null,
     }, done);
   }
@@ -134,7 +103,6 @@ export default class DragHandle extends Component {
     this.unbindWindowEvents();
 
     const state: State = {
-      draggingWith: null,
       pending: null,
     };
     this.setState(state, done);

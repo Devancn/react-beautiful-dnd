@@ -111,9 +111,6 @@ const move = ({
 };
 
 export default (state: State = clean("IDLE"), action: Action): State => {
-  if (action.type === "BEGIN_LIFT") {
-    return clean("COLLECTING_DIMENSIONS");
-  }
 
   if (action.type === "REQUEST_DIMENSIONS") {
     const typeId: TypeId = action.payload;
@@ -131,7 +128,6 @@ export default (state: State = clean("IDLE"), action: Action): State => {
 
   if (action.type === "PUBLISH_DRAGGABLE_DIMENSION") {
     const dimension: DraggableDimension = action.payload;
-
     return {
       ...state,
       dimension: {
@@ -166,6 +162,7 @@ export default (state: State = clean("IDLE"), action: Action): State => {
     const withinDroppable: WithinDroppable = {
       center: page.center,
     };
+    
     const impact: DragImpact = getDragImpact({
       page: page.selection,
       withinDroppable,

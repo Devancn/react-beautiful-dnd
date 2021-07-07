@@ -34,13 +34,11 @@ import type { MapProps, OwnProps, DispatchProps } from "./draggable-types";
 const origin: Position = { x: 0, y: 0 };
 
 const defaultMapProps: MapProps = {
-  isDropAnimating: false,
   isDragging: false,
   isAnotherDragging: false,
   // By default the item will not animate unless instructed to.
   // If animation is enabled then there may be some animation
   // at unexpected points: such as on a DROP_COMPLETE
-  canAnimate: false,
   offset: origin,
   dimension: null,
 };
