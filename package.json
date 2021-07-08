@@ -33,6 +33,7 @@
     "prettier_target": "*.{js,jsx,md,json} src/**/*.{js,jsx,md,json} test/**/*.{js,jsx,md,json} docs/**/*.{js,jsx,md,json} stories/**/*.{js,jsx,md,json} cypress/**/*.{js,jsx,md,json} csp-server/**/*.{js,jsx,md,json}"
   },
   "scripts": {
+    "start": "webpack serve",
     "test:accessibility": "lighthouse http://localhost:9002/iframe.html?id=single-vertical-list--basic --chrome-flags='--headless' --output=json --output=html --output-path=./test-reports/lighthouse/a11y.json && node a11y-audit-parse.js",
     "test": "jest --config ./jest.config.js",
     "test:ci": "jest test --maxWorkers=2",
@@ -85,7 +86,7 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
     "babel-jest": "25.3.0",
-    "babel-loader": "8.1.0",
+    "babel-loader": "^8.2.2",
     "babel-plugin-dev-expression": "0.2.2",
     "babel-plugin-emotion": "10.0.33",
     "cross-env": "7.0.3",
@@ -109,6 +110,7 @@
     "flow-bin": "0.110.1",
     "fs-extra": "9.1.0",
     "globby": "11.0.0",
+    "html-webpack-plugin": "^5.3.2",
     "jest": "25.3.0",
     "jest-axe": "3.5.0",
     "jest-junit": "10.0.0",
@@ -142,7 +144,9 @@
     "stylelint-config-styled-components": "0.1.1",
     "stylelint-processor-styled-components": "1.10.0",
     "wait-port": "0.2.7",
-    "webpack": "4.42.1"
+    "webpack": "^5.43.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
   },
   "peerDependencies": {
     "react": "^16.8.5 || ^17.0.0",
