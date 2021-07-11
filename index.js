@@ -36,14 +36,16 @@ const getItemStyle = (isDragging, draggableStyle) => ({
 const getListStyle = isDraggingOver => ({
   background: isDraggingOver ? "lightblue" : "lightgrey",
   padding: grid,
-  width: 250
+  width: 250,
+  height: 500,
+  overflowY: 'auto'
 });
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: getItems(10)
+      items: getItems(30)
     };
     this.onDragEnd = this.onDragEnd.bind(this);
   }
@@ -59,7 +61,6 @@ class App extends Component {
       result.source.index,
       result.destination.index
     );
-
     this.setState({
       items
     });

@@ -48,37 +48,12 @@ export default ({
   getResponders,
   announce,
   autoScroller,
-}: Args): Store =>
-  createStore(
+}: Args): Store => {
+  return createStore(
     reducer,
     composeEnhancers(
       applyMiddleware(
-        // ## Debug middleware
-
-        // > uncomment to use
-        // debugging logger
-        // require('../debug/middleware/log').default('light'),
-        // // user timing api
-        // require('../debug/middleware/user-timing').default,
-        // debugging timer
-        // require('../debug/middleware/action-timing').default,
-        // average action timer
-        // require('../debug/middleware/action-timing-average').default(200),
-
-        // ## Application middleware
-
-        // Style updates do not cause more actions. It is important to update styles
-        // before responders are called: specifically the onDragEnd responder. We need to clear
-        // the transition styles off the elements before a reorder to prevent strange
-        // post drag animations in firefox. Even though we clear the transition off
-        // a Draggable - if it is done after a reorder firefox will still apply the
-        // transition.
-        // Must be called before dimension marshal for lifting to apply collecting styles
         style(styleMarshal),
-        // Stop the dimension marshal collecting anything
-        // when moving into a phase where collection is no longer needed.
-        // We need to stop the marshal before responders fire as responders can cause
-        // dimension registration changes in response to reordering
         dimensionMarshalStopper(dimensionMarshal),
         // Fire application responders in response to drag changes
         lift(dimensionMarshal),
@@ -95,3 +70,4 @@ export default ({
       ),
     ),
   );
+};

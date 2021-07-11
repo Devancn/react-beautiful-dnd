@@ -89,7 +89,7 @@ export default function createRegistry(): Registry {
       if (!current) {
         return;
       }
-
+   
       // outdated uniqueId
       if (entry.uniqueId !== current.uniqueId) {
         return;
@@ -101,10 +101,12 @@ export default function createRegistry(): Registry {
     getById: getDraggableById,
     findById: findDraggableById,
     exists: (id: DraggableId): boolean => Boolean(findDraggableById(id)),
-    getAllByType: (type: TypeId): DraggableEntry[] =>
-      values(entries.draggables).filter(
+    getAllByType: (type: TypeId): DraggableEntry[] => {
+      return  values(entries.draggables).filter(
         (entry: DraggableEntry): boolean => entry.descriptor.type === type,
-      ),
+      )
+    }
+     
   };
 
   function findDroppableById(id: DroppableId): ?DroppableEntry {

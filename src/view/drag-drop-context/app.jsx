@@ -49,21 +49,7 @@ import usePrevious from '../use-previous-ref';
 import { warning } from '../../dev-warning';
 import useSensorMarshal from '../use-sensor-marshal/use-sensor-marshal';
 
-export type Props = {|
-  ...Responders,
-  contextId: string,
-  setCallbacks: SetAppCallbacks,
-  nonce?: string,
-  // we do not technically need any children for this component
-  children: Node | null,
 
-  // sensors
-  sensors?: Sensor[],
-  enableDefaultSensors?: ?boolean,
-
-  // screen reader
-  dragHandleUsageInstructions: string,
-|};
 
 const createResponders = (props: Props): Responders => ({
   onBeforeCapture: props.onBeforeCapture,
@@ -86,7 +72,6 @@ export default function App(props: Props) {
   const {
     contextId,
     setCallbacks,
-    sensors,
     nonce,
     dragHandleUsageInstructions,
   } = props;
@@ -98,9 +83,10 @@ export default function App(props: Props) {
   const lastPropsRef = usePrevious<Props>(props);
 
   const getResponders: () => Responders = useCallback(() => {
-    return createResponders(lastPropsRef.current);
+    const result = createResponders(lastPropsRef.current);
+    return result
   }, [lastPropsRef]);
-
+  
   const announce: Announce = useAnnouncer(contextId);
 
   const dragHandleUsageInstructionsId: ElementId = useHiddenTextElement({
@@ -132,6 +118,7 @@ export default function App(props: Props) {
   const registry: Registry = useRegistry();
 
   const dimensionMarshal: DimensionMarshal = useMemo<DimensionMarshal>(() => {
+  
     return createDimensionMarshal(registry, marshalCallbacks);
   }, [registry, marshalCallbacks]);
 
@@ -243,7 +230,6 @@ export default function App(props: Props) {
     contextId,
     store,
     registry,
-    customSensors: sensors,
     // default to 'true' unless 'false' is explicitly passed
     enableDefaultSensors: props.enableDefaultSensors !== false,
   });

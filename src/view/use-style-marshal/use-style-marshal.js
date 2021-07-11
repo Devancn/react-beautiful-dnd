@@ -51,13 +51,13 @@ export default function useStyleMarshal(contextId: ContextId, nonce?: string) {
       !alwaysRef.current && !dynamicRef.current,
       'style elements already mounted',
     );
-
     const always: HTMLStyleElement = createStyleEl(nonce);
     const dynamic: HTMLStyleElement = createStyleEl(nonce);
 
     // store their refs
     alwaysRef.current = always;
     dynamicRef.current = dynamic;
+
 
     // for easy identification
     always.setAttribute(`${prefix}-always`, contextId);
@@ -91,7 +91,9 @@ export default function useStyleMarshal(contextId: ContextId, nonce?: string) {
     contextId,
   ]);
 
-  const dragging = useCallback(() => setDynamicStyle(styles.dragging), [
+  const dragging = useCallback(() => {
+    return setDynamicStyle(styles.dragging);
+  }, [
     setDynamicStyle,
     styles.dragging,
   ]);
